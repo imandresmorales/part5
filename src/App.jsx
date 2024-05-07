@@ -55,8 +55,8 @@ const App = () => {
       <button type="submit">login</button>
     </form>      
   )
-
-  const noteForm = () => (
+  
+  const blogForm = () => (
     <div>
       <h2>blogs</h2>
       <p>{user.name} logged-in</p>
@@ -68,7 +68,9 @@ const App = () => {
 
   return (
     <div>
-      {user === null ?loginForm() :noteForm()}
+      {user === null 
+        ?loginForm() 
+        :blogForm()}
       
     </div>
   )
