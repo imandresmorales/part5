@@ -81,11 +81,6 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      setNotification(`a new blog ${title} by ${author} added`)
-      setTimeout(() => {
-        setNotification('')
-      }, 3000);
-
     } catch (exception) {
       setErrorMessage('wrong username or password')
       setTimeout(() => {
@@ -124,17 +119,17 @@ const App = () => {
   )
   }
     
-
-
   const handleLogout = () => {
     window.localStorage.clear()
     setUser(null)
   }
 
-  const handleCreate = () => {
+  const handleCreate = (event) => {
+    event.preventDefault()
     try{
         blogService.setToken(user.token)
-        blogService.create({title:title, author:author, url:url})
+        const newBlog = blogService.create({title:title, author:author, url:url})
+        // console.log(newBlog ===true)
         .then(returnedBlog => {
           setBlogs(blogs.concat(returnedBlog))
           setAuthor('')
@@ -142,19 +137,22 @@ const App = () => {
           setUrl('')
           setNotification(`a new blog ${title} by ${author} added`)
           setTimeout(() => {
-            setNotification('')
+            setNotification(null)
           }, 3000);
         })
     }
     catch(error){
       console.log("error")
+      setNotification(`error`)
+          setTimeout(() => {
+            setNotification(null)
+          }, 3000);
     }
   }
 
   const blogForm = () => {
     return (
       <>
-      {/* <ErrorMessage message={errorMessage}/> */}
       <div>
         <h2>blogs</h2>
         <Notification message={notification}/>
