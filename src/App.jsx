@@ -11,6 +11,8 @@ const App = () => {
   const [title, setTitle] = useState ('')
   const [author, setAuthor] = useState ('')
   const [url, setUrl] = useState ('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [notification, setNotification] = useState(null)
   
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -26,6 +28,46 @@ const App = () => {
     }
   }, [])
 
+  const Notification = ({message}) => {
+    if(message ===null )
+      return null
+    const css =  {
+      color: 'green',
+      background: 'lightgrey',
+      fontSize: 20,
+      borderStyle: 'solid',
+      borderRadius: 5,
+      padding: 10,
+      marginBottom: 10
+    }
+    
+    return(
+      <div style={css}>
+        <p>{message}</p>
+      </div>
+    )
+  }
+
+
+  const ErrorMessage = ({message}) => {
+    if(message ===null )
+      return null
+    const css =  {
+      color: 'red',
+      background: 'lightgrey',
+      fontSize: 20,
+      borderStyle: 'solid',
+      borderRadius: 5,
+      padding: 10,
+      marginBottom: 10
+    }
+    return(
+      <div style={css}>
+        <p>{message}</p>
+      </div>
+    )
+}
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -39,12 +81,24 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      setNotification(`a new blog ${title} by ${author} added`)
+      setTimeout(() => {
+        setNotification('')
+      }, 3000);
+
     } catch (exception) {
-      console.log("error username or password")
+      setErrorMessage('wrong username or password')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 3000);
+      
     }
   }
 
-  const loginForm = () => (
+  const loginForm = () => {
+    return (
+    <>
+    <ErrorMessage message={errorMessage}/>
     <form onSubmit={handleLogin}>
       <div>
         username
@@ -65,62 +119,88 @@ const App = () => {
         />
       </div>
       <button type="submit">login</button>
-    </form>      
+    </form>     
+    </> 
   )
+  }
+    
+
+
   const handleLogout = () => {
     window.localStorage.clear()
     setUser(null)
   }
 
   const handleCreate = () => {
-    blogService.setToken(user.token)
-    blogService.create({title:title, author:author, url:url})
+    try{
+        blogService.setToken(user.token)
+        blogService.create({title:title, author:author, url:url})
+        .then(returnedBlog => {
+          setBlogs(blogs.concat(returnedBlog))
+          setAuthor('')
+          setTitle('')
+          setUrl('')
+          setNotification(`a new blog ${title} by ${author} added`)
+          setTimeout(() => {
+            setNotification('')
+          }, 3000);
+        })
+    }
+    catch(error){
+      console.log("error")
+    }
   }
 
-  const blogForm = () => (
-    <div>
-      <h2>blogs</h2>
-      <p>{user.name} logged in </p>
-      <button onClick={handleLogout}>logout</button>
-      <h2>Create new</h2>
+  const blogForm = () => {
+    return (
+      <>
+      {/* <ErrorMessage message={errorMessage}/> */}
       <div>
-        title:<input
-            type="text"
-            value={title}
-            name="title"
-            onChange={({ target }) => setTitle(target.value)}
-        />
-      </div>
-      <div>
-        author:<input
-            type="text"
-            value={author}
-            name="author"
-            onChange={({ target }) => setAuthor(target.value)}
-        />
-      </div>
-      <div>
-        url:<input
-            type="text"
-            value={url}
-            name="url"
-            onChange={({ target }) => setUrl(target.value)}
-        />
-      </div>
-      <button onClick={handleCreate}>create</button>
+        <h2>blogs</h2>
+        <Notification message={notification}/>
+        <p>{user.name} logged in </p>
+        <button onClick={handleLogout}>logout</button>
+        <h2>Create new</h2>
+        <div>
+          title:<input
+              type="text"
+              value={title}
+              name="title"
+              onChange={({ target }) => setTitle(target.value)}
+          />
+        </div>
+        <div>
+          author:<input
+              type="text"
+              value={author}
+              name="author"
+              onChange={({ target }) => setAuthor(target.value)}
+          />
+        </div>
+        <div>
+          url:<input
+              type="text"
+              value={url}
+              name="url"
+              onChange={({ target }) => setUrl(target.value)}
+          />
+        </div>
+        <button onClick={handleCreate}>create</button>
 
-      {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
-      )}
-    </div>
-  )
+        {blogs.map(blog =>
+            <Blog key={blog.id} blog={blog} />
+        )}
+      </div>
+      </>
+    )
+  }
 
   return (
     <div>
-      {user === null 
-        ?loginForm() 
-        :blogForm()}
-      
+      {user === null ?
+      loginForm() :
+      blogForm()
+      }
     </div>
   )
 }
