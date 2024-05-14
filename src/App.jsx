@@ -13,7 +13,9 @@ const App = () => {
   const [url, setUrl] = useState ('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [notification, setNotification] = useState(null)
-  
+  const [noteVisible, setNoteVisible] = useState(false)
+  const [definition, setDefinition] = useState(false)
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -47,7 +49,6 @@ const App = () => {
       </div>
     )
   }
-
 
   const ErrorMessage = ({message}) => {
     if(message ===null )
@@ -129,12 +130,12 @@ const App = () => {
     try{
         blogService.setToken(user.token)
         const newBlog = blogService.create({title:title, author:author, url:url})
-        // console.log(newBlog ===true)
         .then(returnedBlog => {
           setBlogs(blogs.concat(returnedBlog))
           setAuthor('')
           setTitle('')
           setUrl('')
+          setNoteVisible(!noteVisible)
           setNotification(`a new blog ${title} by ${author} added`)
           setTimeout(() => {
             setNotification(null)
@@ -150,14 +151,13 @@ const App = () => {
     }
   }
 
-  const blogForm = () => {
-    return (
+  const handleNewNote = () => {
+    setNoteVisible(!noteVisible)
+  }
+
+  const newNoteForm = () => {
+    return(
       <>
-      <div>
-        <h2>blogs</h2>
-        <Notification message={notification}/>
-        <p>{user.name} logged in </p>
-        <button onClick={handleLogout}>logout</button>
         <h2>Create new</h2>
         <div>
           title:<input
@@ -184,6 +184,24 @@ const App = () => {
           />
         </div>
         <button onClick={handleCreate}>create</button>
+        <button onClick={handleNewNote}>cancel</button>
+      </>
+    )
+  }
+
+  const blogForm = () => {
+    return (
+      <>
+      <div>
+        <h2>blogs</h2>
+        <Notification message={notification}/>
+        <span>{user.name} logged in </span>
+        <button onClick={handleLogout}>logout</button>
+        <div>
+          {noteVisible == true ?
+          newNoteForm():
+          <button onClick={handleNewNote}>new note</button>}
+        </div>
 
         {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
