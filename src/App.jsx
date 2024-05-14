@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import NewBlogForm from './components/NewBlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -155,40 +156,6 @@ const App = () => {
     setBlogVisible(!blogVisible)
   }
 
-  const newBlogForm = () => {
-    return(
-      <>
-        <h2>Create new</h2>
-        <div>
-          title:<input
-              type="text"
-              value={title}
-              name="title"
-              onChange={({ target }) => setTitle(target.value)}
-          />
-        </div>
-        <div>
-          author:<input
-              type="text"
-              value={author}
-              name="author"
-              onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-        <div>
-          url:<input
-              type="text"
-              value={url}
-              name="url"
-              onChange={({ target }) => setUrl(target.value)}
-          />
-        </div>
-        <button onClick={handleCreate}>create</button>
-        <button onClick={handleNewBlog}>cancel</button>
-      </>
-    )
-  }
-
   const blogForm = () => {
     return (
       <>
@@ -199,7 +166,16 @@ const App = () => {
         <button onClick={handleLogout}>logout</button>
         <div>
           {blogVisible == true ?
-          newBlogForm():
+          <NewBlogForm
+            title={title} 
+            setTitle={setTitle}
+            author={author} 
+            setAuthor={setAuthor} 
+            url={url} 
+            setUrl={setUrl} 
+            handleCreate={handleCreate} 
+            handleNewBlog={handleNewBlog}
+          />:
           <button onClick={handleNewBlog}>new note</button>}
         </div>
 
