@@ -13,8 +13,8 @@ const App = () => {
   const [url, setUrl] = useState ('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [notification, setNotification] = useState(null)
-  const [noteVisible, setNoteVisible] = useState(false)
-  const [definition, setDefinition] = useState(false)
+  const [blogVisible, setBlogVisible] = useState(false)
+
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -135,7 +135,7 @@ const App = () => {
           setAuthor('')
           setTitle('')
           setUrl('')
-          setNoteVisible(!noteVisible)
+          setBlogVisible(!blogVisible)
           setNotification(`a new blog ${title} by ${author} added`)
           setTimeout(() => {
             setNotification(null)
@@ -151,11 +151,11 @@ const App = () => {
     }
   }
 
-  const handleNewNote = () => {
-    setNoteVisible(!noteVisible)
+  const handleNewBlog = () => {
+    setBlogVisible(!blogVisible)
   }
 
-  const newNoteForm = () => {
+  const newBlogForm = () => {
     return(
       <>
         <h2>Create new</h2>
@@ -184,7 +184,7 @@ const App = () => {
           />
         </div>
         <button onClick={handleCreate}>create</button>
-        <button onClick={handleNewNote}>cancel</button>
+        <button onClick={handleNewBlog}>cancel</button>
       </>
     )
   }
@@ -198,9 +198,9 @@ const App = () => {
         <span>{user.name} logged in </span>
         <button onClick={handleLogout}>logout</button>
         <div>
-          {noteVisible == true ?
-          newNoteForm():
-          <button onClick={handleNewNote}>new note</button>}
+          {blogVisible == true ?
+          newBlogForm():
+          <button onClick={handleNewBlog}>new note</button>}
         </div>
 
         {blogs.map(blog =>
