@@ -15,6 +15,7 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [notification, setNotification] = useState(null)
   const [blogVisible, setBlogVisible] = useState(false)
+  
 
 
   useEffect(() => {
@@ -176,11 +177,11 @@ const App = () => {
             handleCreate={handleCreate} 
             handleNewBlog={handleNewBlog}
           />:
-          <button onClick={handleNewBlog}>new note</button>}
+          <button onClick={handleNewBlog}>create new blog</button>}
         </div>
 
         {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} user={user.name}/>
         )}
       </div>
       </>
