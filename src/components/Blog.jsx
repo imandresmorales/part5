@@ -48,6 +48,17 @@ const Blog = ({ blog, user, setBlogs,blogs }) => {
       </div>
     )
   }
+
+  const handleRemove = () => {
+    const response = window.confirm(`Removing blog ${blog.title} by ${blog.author}`)
+    if(response == true){
+      blogService.setToken(user.token)
+      const respuesta = blogService.eliminar(blog.id)
+      .then(resp =>{
+        setBlogs(blogs.filter(vlog => vlog.id !== blog.id ))
+      })
+    }
+  }
   
   const hide =() => {
     return (
@@ -55,7 +66,10 @@ const Blog = ({ blog, user, setBlogs,blogs }) => {
         {blog.title} {blog.author} <button onClick={handleDetails}>hide</button>
         <p>{blog.url}</p>
         <p><span>likes </span>{blog.likes}  <button onClick={handleLike}>like</button></p>
-        <p>{user.name}</p>
+        <p>{blog.user.name}</p>
+        {blog.user.name === user.name?
+        <button onClick={handleRemove}>remove</button>:
+        ''}
       </div>
     )
   }
