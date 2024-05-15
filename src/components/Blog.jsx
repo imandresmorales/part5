@@ -25,6 +25,7 @@ const Blog = ({ blog, user, setBlogs,blogs }) => {
         const b = blog
         const bChange = {...b, likes: blog.likes +1 }
         setBlogs( blogs.map(vlog => vlog.id === blog.id ? bChange : vlog))
+        console.log(blogs)
       })
     }
     catch(error){

@@ -131,7 +131,8 @@ const App = () => {
         blogService.setToken(user.token)
         const newBlog = blogService.create({title:title, author:author, url:url})
         .then(returnedBlog => {
-          setBlogs(blogs.concat(returnedBlog))
+          console.log(returnedBlog)
+          setBlogs(blogs.concat({... returnedBlog, user :{username: user.username, name: user.name, id: returnedBlog.id }}))
           setAuthor('')
           setTitle('')
           setUrl('')
