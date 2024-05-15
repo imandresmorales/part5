@@ -15,8 +15,6 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [notification, setNotification] = useState(null)
   const [blogVisible, setBlogVisible] = useState(false)
-  
-
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -181,7 +179,7 @@ const App = () => {
         </div>
 
         {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} user={user.name}/>
+            <Blog key={blog.id} blog={blog} user={user} setBlogs={setBlogs} blogs={blogs}/>
         )}
       </div>
       </>

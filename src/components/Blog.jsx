@@ -1,12 +1,37 @@
 import { useState } from "react"
+import blogService from '../services/blogs'
 
-const Blog = ({ blog, user }) => {
+const Blog = ({ blog, user, setBlogs,blogs }) => {
   const [details, setDetails] = useState(false)
 
   const handleDetails = () => {
     setDetails(!details)
   }
-  
+
+  const handleLike = () => {
+    blogService.setToken(user.token)
+    const object = {
+      user: blog.user.id,
+      title: blog.title,
+      likes: blog.likes +1,
+      author: blog.author,
+      url: blog.url,
+      id: blog.id
+    }
+    
+    try{
+      const update = blogService.put(object)
+      .then(returnedBlog => {
+        const b = blog
+        const bChange = {...b, likes: blog.likes +1 }
+        setBlogs( blogs.map(vlog => vlog.id === blog.id ? bChange : vlog))
+      })
+    }
+    catch(error){
+      console.log("error")
+    }
+  }
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -28,21 +53,20 @@ const Blog = ({ blog, user }) => {
       <div>
         {blog.title} {blog.author} <button onClick={handleDetails}>hide</button>
         <p>{blog.url}</p>
-        <p><span>likes </span>{blog.likes}  <button >like</button></p>
-        <p>{user}</p>
+        <p><span>likes </span>{blog.likes}  <button onClick={handleLike}>like</button></p>
+        <p>{user.name}</p>
       </div>
     )
   }
 
   return (
-
     <div style={blogStyle}>
       <div>
         {details === false ?
         view():
         hide()}
       </div>
-  </div>
+    </div>
 )}
 
 export default Blog
