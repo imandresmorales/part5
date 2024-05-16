@@ -6,8 +6,8 @@ import NewBlogForm from './components/NewBlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [title, setTitle] = useState ('')
   const [author, setAuthor] = useState ('')
@@ -19,7 +19,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const App = () => {
     }
   }, [])
 
-  const Notification = ({message}) => {
+  const Notification = ({ message }) => {
     if(message ===null )
       return null
     const css =  {
@@ -42,7 +42,7 @@ const App = () => {
       padding: 10,
       marginBottom: 10
     }
-    
+
     return(
       <div style={css}>
         <p>{message}</p>
@@ -50,7 +50,7 @@ const App = () => {
     )
   }
 
-  const ErrorMessage = ({message}) => {
+  const ErrorMessage = ({ message }) => {
     if(message ===null )
       return null
     const css =  {
@@ -67,7 +67,7 @@ const App = () => {
         <p>{message}</p>
       </div>
     )
-}
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -77,7 +77,7 @@ const App = () => {
       })
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
-      ) 
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -86,39 +86,39 @@ const App = () => {
       setErrorMessage('wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
-      }, 3000);
+      }, 3000)
     }
   }
 
   const loginForm = () => {
     return (
-    <>
-    <ErrorMessage message={errorMessage}/>
-    <form onSubmit={handleLogin}>
-      <div>
+      <>
+        <ErrorMessage message={errorMessage}/>
+        <form onSubmit={handleLogin}>
+          <div>
         username
-          <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
+            <input
+              type="text"
+              value={username}
+              name="Username"
+              onChange={({ target }) => setUsername(target.value)}
+            />
+          </div>
+          <div>
         password
-          <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>     
-    </> 
-  )
+            <input
+              type="password"
+              value={password}
+              name="Password"
+              onChange={({ target }) => setPassword(target.value)}
+            />
+          </div>
+          <button type="submit">login</button>
+        </form>
+      </>
+    )
   }
-    
+
   const handleLogout = () => {
     window.localStorage.clear()
     setUser(null)
@@ -127,11 +127,11 @@ const App = () => {
   const handleCreate = (event) => {
     event.preventDefault()
     try{
-        blogService.setToken(user.token)
-        const newBlog = blogService.create({title:title, author:author, url:url})
+      blogService.setToken(user.token)
+      blogService.create({ title:title, author:author, url:url })
         .then(returnedBlog => {
-          // console.log(returnedBlog)
-          setBlogs(blogs.concat({... returnedBlog, user :{username: user.username, name: user.name, id: returnedBlog.id }}))
+
+          setBlogs(blogs.concat({ ... returnedBlog, user :{ username: user.username, name: user.name, id: returnedBlog.id } }))
           setAuthor('')
           setTitle('')
           setUrl('')
@@ -139,15 +139,15 @@ const App = () => {
           setNotification(`a new blog ${title} by ${author} added`)
           setTimeout(() => {
             setNotification(null)
-          }, 3000);
+          }, 3000)
         })
     }
     catch(error){
-      console.log("error")
-      setNotification(`error`)
-          setTimeout(() => {
-            setNotification(null)
-          }, 3000);
+      console.log('error')
+      setNotification('error')
+      setTimeout(() => {
+        setNotification(null)
+      }, 3000)
     }
   }
 
@@ -158,29 +158,29 @@ const App = () => {
   const blogForm = () => {
     return (
       <>
-      <div>
-        <h2>blogs</h2>
-        <Notification message={notification}/>
-        <span>{user.name} logged in </span>
-        <button onClick={handleLogout}>logout</button>
         <div>
-          {blogVisible == true ?
-          <NewBlogForm
-            title={title} 
-            setTitle={setTitle}
-            author={author} 
-            setAuthor={setAuthor} 
-            url={url} 
-            setUrl={setUrl} 
-            handleCreate={handleCreate} 
-            handleNewBlog={handleNewBlog}
-          />:
-          <button onClick={handleNewBlog}>create new blog</button>}
-        </div>
-        {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
+          <h2>blogs</h2>
+          <Notification message={notification}/>
+          <span>{user.name} logged in </span>
+          <button onClick={handleLogout}>logout</button>
+          <div>
+            {blogVisible === true ?
+              <NewBlogForm
+                title={title}
+                setTitle={setTitle}
+                author={author}
+                setAuthor={setAuthor}
+                url={url}
+                setUrl={setUrl}
+                handleCreate={handleCreate}
+                handleNewBlog={handleNewBlog}
+              />:
+              <button onClick={handleNewBlog}>create new blog</button>}
+          </div>
+          {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
             <Blog key={blog.id} blog={blog} user={user} setBlogs={setBlogs} blogs={blogs}/>
-        )}
-      </div>
+          )}
+        </div>
       </>
     )
   }
@@ -188,8 +188,8 @@ const App = () => {
   return (
     <div>
       {user === null ?
-      loginForm() :
-      blogForm()
+        loginForm() :
+        blogForm()
       }
     </div>
   )

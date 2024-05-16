@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useState } from 'react'
 import blogService from '../services/blogs'
+import PropTypes from 'prop-types'
 
-const Blog = ({ blog, user, setBlogs,blogs }) => {
+const Blog = ({ blog, user, setBlogs, blogs }) => {
   const [details, setDetails] = useState(false)
 
   const handleDetails = () => {
@@ -18,18 +19,18 @@ const Blog = ({ blog, user, setBlogs,blogs }) => {
       url: blog.url,
       id: blog.id
     }
-    
+
     try{
-      const update = blogService.put(object)
-      .then(returnedBlog => {
-        const b = blog
-        const bChange = {...b, likes: blog.likes +1 }
-        setBlogs( blogs.map(vlog => vlog.id === blog.id ? bChange : vlog))
+      blogService.put(object)
+        .then(() => {
+          const b = blog
+          const bChange = { ...b, likes: blog.likes +1 }
+          setBlogs( blogs.map(vlog => vlog.id === blog.id ? bChange : vlog))
         // console.log(blogs)
-      })
+        })
     }
     catch(error){
-      console.log("error")
+      console.log('error')
     }
   }
 
@@ -51,15 +52,15 @@ const Blog = ({ blog, user, setBlogs,blogs }) => {
 
   const handleRemove = () => {
     const response = window.confirm(`Removing blog ${blog.title} by ${blog.author}`)
-    if(response == true){
+    if(response === true){
       blogService.setToken(user.token)
-      const respuesta = blogService.eliminar(blog.id)
-      .then(resp =>{
-        setBlogs(blogs.filter(vlog => vlog.id !== blog.id ))
-      })
+      blogService.eliminar(blog.id)
+        .then(() => {
+          setBlogs(blogs.filter(vlog => vlog.id !== blog.id ))
+        })
     }
   }
-  
+
   const hide =() => {
     return (
       <div>
@@ -68,8 +69,8 @@ const Blog = ({ blog, user, setBlogs,blogs }) => {
         <p><span>likes </span>{blog.likes}  <button onClick={handleLike}>like</button></p>
         <p>{blog.user.name}</p>
         {blog.user.name === user.name?
-        <button onClick={handleRemove}>remove</button>:
-        ''}
+          <button onClick={handleRemove}>remove</button>:
+          ''}
       </div>
     )
   }
@@ -78,10 +79,17 @@ const Blog = ({ blog, user, setBlogs,blogs }) => {
     <div style={blogStyle}>
       <div>
         {details === false ?
-        view():
-        hide()}
+          view():
+          hide()}
       </div>
     </div>
-)}
+  )}
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  setBlogs: PropTypes.func.isRequired,
+  blogs: PropTypes.array.isRequired
+}
 
 export default Blog
