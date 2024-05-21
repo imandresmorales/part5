@@ -44,7 +44,7 @@ const Blog = ({ blog, user, setBlogs, blogs }) => {
 
   const view = () => {
     return (
-      <div>
+      <div data-testid='blog-view'>
         {blog.title} {blog.author} <button onClick={handleDetails}>view</button>
       </div>
     )
@@ -85,11 +85,11 @@ const Blog = ({ blog, user, setBlogs, blogs }) => {
     </div>
   )}
 
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
-  setBlogs: PropTypes.func.isRequired,
-  blogs: PropTypes.array.isRequired
-}
+// Blog.propTypes = {
+//   blog: PropTypes.object.isRequired,
+//   user: PropTypes.object.isRequired,
+//   setBlogs: PropTypes.func.isRequired,
+//   blogs: PropTypes.array.isRequired
+// }
 
 export default Blog
