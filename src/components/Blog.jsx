@@ -45,7 +45,7 @@ const Blog = ({ blog, user, setBlogs, blogs }) => {
   const view = () => {
     return (
       <div data-testid='blog-view'>
-        {blog.title} {blog.author} <button onClick={handleDetails}>view</button>
+        {blog.title} {blog.author} <button onClick={handleDetails} data-testid="view-button">view</button>
       </div>
     )
   }
@@ -63,8 +63,8 @@ const Blog = ({ blog, user, setBlogs, blogs }) => {
 
   const hide =() => {
     return (
-      <div>
-        {blog.title} {blog.author} <button onClick={handleDetails}>hide</button>
+      <div data-testid='blogHide'>
+        {blog.title} {blog.author} <button onClick={handleDetails} >hide</button>
         <p>{blog.url}</p>
         <p><span>likes </span>{blog.likes}  <button onClick={handleLike}>like</button></p>
         <p>{blog.user.name}</p>
@@ -85,11 +85,11 @@ const Blog = ({ blog, user, setBlogs, blogs }) => {
     </div>
   )}
 
-// Blog.propTypes = {
-//   blog: PropTypes.object.isRequired,
-//   user: PropTypes.object.isRequired,
-//   setBlogs: PropTypes.func.isRequired,
-//   blogs: PropTypes.array.isRequired
-// }
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  setBlogs: PropTypes.func.isRequired,
+  blogs: PropTypes.array.isRequired
+}
 
 export default Blog
