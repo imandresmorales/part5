@@ -1,49 +1,50 @@
-import axios from 'axios'
-const baseUrl = '/api/blogs'
+import axios from "axios";
+const baseUrl = "/api/blogs";
 
-let token = null
+let token = null;
 
-const setToken = newToken => {
-  token = `Bearer ${newToken}`
-}
+const setToken = (newToken) => {
+  token = `Bearer ${newToken}`;
+};
 
 const getAll = () => {
-  const request = axios.get(baseUrl)
+  const request = axios.get(baseUrl);
 
-  return request.then(response => response.data)
-}
+  return request.then((response) => response.data);
+};
 
-const create = async newObject => {
+const create = async (newObject) => {
   const config = {
     headers: { Authorization: token },
-  }
+  };
 
-  const response = await axios.post(baseUrl, newObject, config)
-  return response.data
-}
+  const response = await axios.post(baseUrl, newObject, config);
+  return response.data;
+};
 
 const put = async (object) => {
   const config = {
     headers: { Authorization: token },
-  }
+  };
   const blog = {
     user: object.user.id,
-    title:object.title,
+    title: object.title,
     likes: object.likes,
     author: object.author,
-    url: object.url
-  }
+    url: object.url,
+  };
+  const response = await axios.put(`${baseUrl}/${object.id}`, blog, config);
 
-  const response = await axios.put(`${baseUrl}/${object.id}`, blog, config )
-  return response.data
-}
+  return response.data;
+};
 
 const eliminar = async (id) => {
   const config = {
     headers: { Authorization: token },
-  }
-  const response = await axios.delete(`${baseUrl}/${id}`, config)
-  return response.data
-}
+  };
+  // console.log(`${baseUrl}/${id}`)
+  const response = await axios.delete(`${baseUrl}/${id}`, config);
+  return response.data;
+};
 
-export default { getAll, setToken, create, put, eliminar }
+export default { getAll, setToken, create, put, eliminar };

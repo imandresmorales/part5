@@ -1,103 +1,99 @@
-import { useState, useEffect } from 'react'
-import Blog from './components/Blog'
-import blogService from './services/blogs'
-import loginService from './services/login'
-import NewBlogForm from './components/NewBlogForm'
+import { useState, useEffect } from "react";
+import Blog from "./components/Blog";
+import blogService from "./services/blogs";
+import loginService from "./services/login";
+import NewBlogForm from "./components/NewBlogForm";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-  const [title, setTitle] = useState ('')
-  const [author, setAuthor] = useState ('')
-  const [url, setUrl] = useState ('')
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [notification, setNotification] = useState(null)
-  const [blogVisible, setBlogVisible] = useState(false)
+  const [blogs, setBlogs] = useState([]);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [user, setUser] = useState(null);
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [url, setUrl] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [notification, setNotification] = useState(null);
+  const [blogVisible, setBlogVisible] = useState(false);
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
-  }, [])
+    blogService.getAll().then((blogs) => setBlogs(blogs));
+  }, []);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
     }
-  }, [])
+  }, []);
 
   const Notification = ({ message }) => {
-    if(message ===null )
-      return null
-    const css =  {
-      color: 'green',
-      background: 'lightgrey',
+    if (message === null) return null;
+    const css = {
+      color: "green",
+      background: "lightgrey",
       fontSize: 20,
-      borderStyle: 'solid',
+      borderStyle: "solid",
       borderRadius: 5,
       padding: 10,
-      marginBottom: 10
-    }
+      marginBottom: 10,
+    };
 
-    return(
+    return (
       <div style={css}>
         <p>{message}</p>
       </div>
-    )
-  }
+    );
+  };
 
   const ErrorMessage = ({ message }) => {
-    if(message ===null )
-      return null
-    const css =  {
-      color: 'red',
-      background: 'lightgrey',
+    if (message === null) return null;
+    const css = {
+      color: "red",
+      background: "lightgrey",
       fontSize: 20,
-      borderStyle: 'solid',
+      borderStyle: "solid",
       borderRadius: 5,
       padding: 10,
-      marginBottom: 10
-    }
-    return(
+      marginBottom: 10,
+    };
+    return (
       <div style={css}>
         <p>{message}</p>
       </div>
-    )
-  }
+    );
+  };
 
   const handleLogin = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
     try {
       const user = await loginService.login({
-        username, password,
-      })
-      window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
-      )
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
+        username,
+        password,
+      });
+      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+      blogService.setToken(user.token);
+      setUser(user);
+      setUsername("");
+      setPassword("");
     } catch (exception) {
-      setErrorMessage('wrong username or password')
+      setErrorMessage("wrong username or password");
       setTimeout(() => {
-        setErrorMessage(null)
-      }, 3000)
+        setErrorMessage(null);
+      }, 3000);
     }
-  }
+  };
 
   const loginForm = () => {
     return (
       <>
-        <ErrorMessage message={errorMessage}/>
+        <ErrorMessage message={errorMessage} />
         <form onSubmit={handleLogin}>
           <div>
-        username
+            username
             <input
+              data-testid="username"
               type="text"
               value={username}
               name="Username"
@@ -105,8 +101,9 @@ const App = () => {
             />
           </div>
           <div>
-        password
+            password
             <input
+              data-testid="password"
               type="password"
               value={password}
               name="Password"
@@ -116,55 +113,63 @@ const App = () => {
           <button type="submit">login</button>
         </form>
       </>
-    )
-  }
+    );
+  };
 
   const handleLogout = () => {
-    window.localStorage.clear()
-    setUser(null)
-  }
+    window.localStorage.clear();
+    setUser(null);
+  };
 
   const handleCreate = (event) => {
-    event.preventDefault()
-    try{
-      blogService.setToken(user.token)
-      blogService.create({ title:title, author:author, url:url })
-        .then(returnedBlog => {
-
-          setBlogs(blogs.concat({ ... returnedBlog, user :{ username: user.username, name: user.name, id: returnedBlog.id } }))
-          setAuthor('')
-          setTitle('')
-          setUrl('')
-          setBlogVisible(!blogVisible)
-          setNotification(`a new blog ${title} by ${author} added`)
+    event.preventDefault();
+    try {
+      blogService.setToken(user.token);
+      blogService
+        .create({ title: title, author: author, url: url })
+        .then((returnedBlog) => {
+          setBlogs(
+            blogs.concat({
+              ...returnedBlog,
+              user: {
+                username: user.username,
+                name: user.name,
+                id: returnedBlog.id,
+              },
+            }),
+          );
+          setAuthor("");
+          setTitle("");
+          setUrl("");
+          setBlogVisible(!blogVisible);
+          setNotification(`a new blog ${title} by ${author} added`);
           setTimeout(() => {
-            setNotification(null)
-          }, 3000)
-        })
-    }
-    catch(error){
-      console.log('error')
-      setNotification('error')
+            setNotification(null);
+          }, 3000);
+        });
+    } catch (error) {
+      console.log("error");
+      setNotification("error");
       setTimeout(() => {
-        setNotification(null)
-      }, 3000)
+        setNotification(null);
+      }, 3000);
     }
-  }
+  };
 
   const handleNewBlog = () => {
-    setBlogVisible(!blogVisible)
-  }
+    setBlogVisible(!blogVisible);
+  };
 
   const blogForm = () => {
     return (
       <>
         <div>
           <h2>blogs</h2>
-          <Notification message={notification}/>
+          <Notification message={notification} />
           <span>{user.name} logged in </span>
           <button onClick={handleLogout}>logout</button>
           <div>
-            {blogVisible === true ?
+            {blogVisible === true ? (
               <NewBlogForm
                 title={title}
                 setTitle={setTitle}
@@ -174,25 +179,29 @@ const App = () => {
                 setUrl={setUrl}
                 handleCreate={handleCreate}
                 handleNewBlog={handleNewBlog}
-              />:
-              <button onClick={handleNewBlog}>create new blog</button>}
+              />
+            ) : (
+              <button onClick={handleNewBlog}>create new blog</button>
+            )}
           </div>
-          {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
-            <Blog key={blog.id} blog={blog} user={user} setBlogs={setBlogs} blogs={blogs}/>
-          )}
+          {blogs
+            .sort((a, b) => b.likes - a.likes)
+            .map((blog) => (
+              <Blog
+                data-test="vlogs"
+                key={blog.id}
+                blog={blog}
+                user={user}
+                setBlogs={setBlogs}
+                blogs={blogs}
+              />
+            ))}
         </div>
       </>
-    )
-  }
+    );
+  };
 
-  return (
-    <div>
-      {user === null ?
-        loginForm() :
-        blogForm()
-      }
-    </div>
-  )
-}
+  return <div>{user === null ? loginForm() : blogForm()}</div>;
+};
 
-export default App
+export default App;

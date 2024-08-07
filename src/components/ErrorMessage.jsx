@@ -1,20 +1,19 @@
 const ErrorMessage = ({ message }) => {
-  if(message ===null )
-    return null
-  const css =  {
-    color: 'red',
-    background: 'lightgrey',
+  if (message === null) return null;
+  const css = {
+    color: "red",
+    background: "lightgrey",
     fontSize: 20,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderRadius: 5,
     padding: 10,
-    marginBottom: 10
-  }
-  return(
+    marginBottom: 10,
+  };
+  return (
     <div style={css}>
       <p>{message}</p>
     </div>
-  )
-}
+  );
+};
 
-export default ErrorMessage
+export default ErrorMessage;
