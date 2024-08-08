@@ -3,8 +3,16 @@ import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import NewBlogForm from "./components/NewBlogForm";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  showNotification,
+  hideNotification,
+} from "./reducers/notificationReducer";
 
 const App = () => {
+  const dispatch = useDispatch();
+  const notifications = useSelector((state) => state.notification);
+
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -13,7 +21,6 @@ const App = () => {
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
-  const [notification, setNotification] = useState(null);
   const [blogVisible, setBlogVisible] = useState(false);
 
   useEffect(() => {
@@ -142,16 +149,16 @@ const App = () => {
           setTitle("");
           setUrl("");
           setBlogVisible(!blogVisible);
-          setNotification(`a new blog ${title} by ${author} added`);
+          dispatch(showNotification(title, author));
           setTimeout(() => {
-            setNotification(null);
+            dispatch(hideNotification(""));
           }, 3000);
         });
     } catch (error) {
       console.log("error");
-      setNotification("error");
+      dispatch(showNotification("error"));
       setTimeout(() => {
-        setNotification(null);
+        dispatch(hideNotification(""));
       }, 3000);
     }
   };
@@ -165,7 +172,7 @@ const App = () => {
       <>
         <div>
           <h2>blogs</h2>
-          <Notification message={notification} />
+          <Notification message={notifications} />
           <span>{user.name} logged in </span>
           <button onClick={handleLogout}>logout</button>
           <div>
