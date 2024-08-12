@@ -14,8 +14,7 @@ const App = () => {
   const dispatch = useDispatch();
   const notifications = useSelector((state) => state.notification);
   const blogs = useSelector((state) => state.blogs);
-  // console.log(blogs);
-  // const [blogs, setBlogs] = useState([]);
+
   const [user, setUser] = useState(null);
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -28,7 +27,6 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then((blogs) => {
       blogs.map((blog) => {
-        // console.log(blog);
         dispatch(addBlog(blog));
       });
     });
@@ -142,17 +140,15 @@ const App = () => {
       blogService
         .create({ title: title, author: author, url: url })
         .then((returnedBlog) => {
-          dispatch(
-            addBlog(returnedBlog),
-            // blogs.concat({
-            //   ...returnedBlog,
-            //   user: {
-            //     username: user.username,
-            //     name: user.name,
-            //     id: returnedBlog.id,
-            //   },
-            // }),
-          );
+          const newBlog = {
+            ...returnedBlog,
+            user: {
+              name: user.name,
+              username: user.username,
+              id: returnedBlog.user,
+            },
+          };
+          dispatch(addBlog(newBlog));
           setAuthor("");
           setTitle("");
           setUrl("");

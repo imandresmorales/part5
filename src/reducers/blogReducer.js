@@ -11,9 +11,11 @@ const blogReducer = (state = [], action) => {
   // console.log(action.type);
   switch (action.type) {
     case "add":
-      // console.log("entro");
-      // console.log(action.payload);
       return state.concat(action.payload);
+    case "update":
+      return action.payload;
+    case "eliminar":
+      return action.payload;
     default:
       return state;
   }
@@ -22,6 +24,20 @@ const blogReducer = (state = [], action) => {
 export const addBlog = (blog) => {
   return {
     type: "add",
+    payload: blog,
+  };
+};
+
+export const updateBlog = (blog) => {
+  return {
+    type: "update",
+    payload: blog,
+  };
+};
+
+export const eliminarBlog = (blog) => {
+  return {
+    type: "eliminar",
     payload: blog,
   };
 };

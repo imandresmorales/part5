@@ -1,6 +1,7 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
 import PropTypes from "prop-types";
+import { eliminarBlog, updateBlog } from "../reducers/blogReducer";
 
 const Blog = ({ blog, user, dispatch, blogs }) => {
   const [details, setDetails] = useState(false);
@@ -23,7 +24,10 @@ const Blog = ({ blog, user, dispatch, blogs }) => {
     blogService.put(object).then(() => {
       const b = blog;
       const bChange = { ...b, likes: blog.likes + 1 };
-      dispatch(blogs.map((vlog) => (vlog.id === blog.id ? bChange : vlog)));
+      const updateBlogs = blogs.map((vlog) =>
+        vlog.id === blog.id ? bChange : vlog,
+      );
+      dispatch(updateBlog(updateBlogs));
     });
   };
 
@@ -55,7 +59,8 @@ const Blog = ({ blog, user, dispatch, blogs }) => {
       blogService
         .eliminar(blog.id)
         .then(() => {
-          dispatch(blogs.filter((vlog) => vlog.id !== blog.id));
+          const blogsResultantes = blogs.filter((vlog) => vlog.id !== blog.id);
+          dispatch(eliminarBlog(blogsResultantes));
         })
         .catch((error) => {
           console.log("error en eliminar");
