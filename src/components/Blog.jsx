@@ -64,7 +64,6 @@ const Blog = ({ blog, user, dispatch, blogs }) => {
         })
         .catch((error) => {
           console.log("error en eliminar");
-          console.log();
         });
     }
   };

@@ -26,7 +26,7 @@ const put = async (object) => {
   const config = {
     headers: { Authorization: token },
   };
-  console.log(object);
+
   const blog = {
     user: object.user.id,
     title: object.title,
@@ -43,7 +43,6 @@ const eliminar = async (id) => {
   const config = {
     headers: { Authorization: token },
   };
-  // console.log(`${baseUrl}/${id}`)
   const response = await axios.delete(`${baseUrl}/${id}`, config);
   return response.data;
 };

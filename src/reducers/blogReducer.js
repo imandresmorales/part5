@@ -1,5 +1,3 @@
-// import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
-
 const initialState = {
   user: null,
   title: null,
@@ -8,7 +6,6 @@ const initialState = {
 };
 
 const blogReducer = (state = [], action) => {
-  // console.log(action.type);
   switch (action.type) {
     case "add":
       return state.concat(action.payload);

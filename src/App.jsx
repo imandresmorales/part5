@@ -9,13 +9,14 @@ import {
   hideNotification,
 } from "./reducers/notificationReducer";
 import { addBlog } from "./reducers/blogReducer";
+import { loginUser, logoutUser } from "./reducers/userReducer";
 
 const App = () => {
   const dispatch = useDispatch();
   const notifications = useSelector((state) => state.notification);
   const blogs = useSelector((state) => state.blogs);
+  const user = useSelector((state) => state.user);
 
-  const [user, setUser] = useState(null);
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
@@ -35,8 +36,8 @@ const App = () => {
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      const userX = JSON.parse(loggedUserJSON);
+      dispatch(loginUser(userX));
     }
   }, []);
 
@@ -80,13 +81,18 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const user = await loginService.login({
+      const userLogin = await loginService.login({
         username,
         password,
       });
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-      blogService.setToken(user.token);
-      setUser(user);
+
+      window.localStorage.setItem(
+        "loggedBlogappUser",
+        JSON.stringify(userLogin),
+      );
+
+      blogService.setToken(userLogin.token);
+      dispatch(loginUser(userLogin));
       setUsername("");
       setPassword("");
     } catch (exception) {
@@ -130,7 +136,7 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.clear();
-    setUser(null);
+    dispatch(logoutUser("salio"));
   };
 
   const handleCreate = (event) => {
@@ -159,7 +165,6 @@ const App = () => {
           }, 3000);
         });
     } catch (error) {
-      console.log("error");
       dispatch(showNotification("error"));
       setTimeout(() => {
         dispatch(hideNotification(""));
@@ -212,7 +217,7 @@ const App = () => {
     );
   };
 
-  return <div>{user === null ? loginForm() : blogForm()}</div>;
+  return <div>{user.name === null ? loginForm() : blogForm()}</div>;
 };
 
 export default App;
