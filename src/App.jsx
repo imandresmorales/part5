@@ -8,23 +8,30 @@ import {
   showNotification,
   hideNotification,
 } from "./reducers/notificationReducer";
+import { addBlog } from "./reducers/blogReducer";
 
 const App = () => {
   const dispatch = useDispatch();
   const notifications = useSelector((state) => state.notification);
-
-  const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const blogs = useSelector((state) => state.blogs);
+  // console.log(blogs);
+  // const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const [blogVisible, setBlogVisible] = useState(false);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService.getAll().then((blogs) => {
+      blogs.map((blog) => {
+        // console.log(blog);
+        dispatch(addBlog(blog));
+      });
+    });
   }, []);
 
   useEffect(() => {
@@ -135,15 +142,16 @@ const App = () => {
       blogService
         .create({ title: title, author: author, url: url })
         .then((returnedBlog) => {
-          setBlogs(
-            blogs.concat({
-              ...returnedBlog,
-              user: {
-                username: user.username,
-                name: user.name,
-                id: returnedBlog.id,
-              },
-            }),
+          dispatch(
+            addBlog(returnedBlog),
+            // blogs.concat({
+            //   ...returnedBlog,
+            //   user: {
+            //     username: user.username,
+            //     name: user.name,
+            //     id: returnedBlog.id,
+            //   },
+            // }),
           );
           setAuthor("");
           setTitle("");
@@ -172,7 +180,7 @@ const App = () => {
       <>
         <div>
           <h2>blogs</h2>
-          <Notification message={notifications} />
+          <Notification message={notifications.notification} />
           <span>{user.name} logged in </span>
           <button onClick={handleLogout}>logout</button>
           <div>
@@ -199,7 +207,7 @@ const App = () => {
                 key={blog.id}
                 blog={blog}
                 user={user}
-                setBlogs={setBlogs}
+                dispatch={dispatch}
                 blogs={blogs}
               />
             ))}
