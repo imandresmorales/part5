@@ -11,6 +11,131 @@ import {
 import { addBlog } from "./reducers/blogReducer";
 import { loginUser, logoutUser } from "./reducers/userReducer";
 
+import userService from "./services/users";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+const Notification = ({ message }) => {
+  if (message === null) return null;
+  const css = {
+    color: "green",
+    background: "lightgrey",
+    fontSize: 20,
+    borderStyle: "solid",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  };
+
+  return (
+    <div style={css}>
+      <p>{message}</p>
+    </div>
+  );
+};
+
+const ErrorMessage = ({ message }) => {
+  if (message === null) return null;
+  const css = {
+    color: "red",
+    background: "lightgrey",
+    fontSize: 20,
+    borderStyle: "solid",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  };
+  return (
+    <div style={css}>
+      <p>{message}</p>
+    </div>
+  );
+};
+
+const Head = ({ user, handleLogout }) => {
+  return (
+    <div>
+      <p>{user.name} logged in </p>
+      <button onClick={handleLogout}>logout</button>
+    </div>
+  );
+};
+
+const Home = ({
+  user,
+  blogs,
+  blogVisible,
+  title,
+  setTitle,
+  author,
+  setAuthor,
+  url,
+  setUrl,
+  handleCreate,
+  handleNewBlog,
+  handleLogout,
+  dispatch,
+}) => {
+  return (
+    <>
+      <Head user={user} handleLogout={handleLogout} />
+      {blogVisible === true ? (
+        <NewBlogForm
+          title={title}
+          setTitle={setTitle}
+          author={author}
+          setAuthor={setAuthor}
+          url={url}
+          setUrl={setUrl}
+          handleCreate={handleCreate}
+          handleNewBlog={handleNewBlog}
+        />
+      ) : (
+        <button onClick={handleNewBlog}>create new blog</button>
+      )}
+      {blogs
+        .sort((a, b) => b.likes - a.likes)
+        .map((blog) => (
+          <Blog
+            data-test="vlogs"
+            key={blog.id}
+            blog={blog}
+            user={user}
+            dispatch={dispatch}
+            blogs={blogs}
+          />
+        ))}
+    </>
+  );
+};
+
+const View = ({ users, notifications, user, handleLogout }) => {
+  return (
+    <div>
+      <Notification message={notifications.notification} />
+      <Head user={user} handleLogout={handleLogout} />
+      <h2>Users</h2>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>blogs created</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td>{user.name}</td>
+              <td>{user.blogs.length}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
 const App = () => {
   const dispatch = useDispatch();
   const notifications = useSelector((state) => state.notification);
@@ -24,6 +149,13 @@ const App = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const [blogVisible, setBlogVisible] = useState(false);
+
+  const [users, setUsers] = useState([]);
+  // console.log(blogVisible);
+
+  useEffect(() => {
+    userService.getAll().then((user) => setUsers(user));
+  }, []);
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
@@ -40,43 +172,6 @@ const App = () => {
       dispatch(loginUser(userX));
     }
   }, []);
-
-  const Notification = ({ message }) => {
-    if (message === null) return null;
-    const css = {
-      color: "green",
-      background: "lightgrey",
-      fontSize: 20,
-      borderStyle: "solid",
-      borderRadius: 5,
-      padding: 10,
-      marginBottom: 10,
-    };
-
-    return (
-      <div style={css}>
-        <p>{message}</p>
-      </div>
-    );
-  };
-
-  const ErrorMessage = ({ message }) => {
-    if (message === null) return null;
-    const css = {
-      color: "red",
-      background: "lightgrey",
-      fontSize: 20,
-      borderStyle: "solid",
-      borderRadius: 5,
-      padding: 10,
-      marginBottom: 10,
-    };
-    return (
-      <div style={css}>
-        <p>{message}</p>
-      </div>
-    );
-  };
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -179,40 +274,44 @@ const App = () => {
   const blogForm = () => {
     return (
       <>
-        <div>
+        <BrowserRouter>
           <h2>blogs</h2>
           <Notification message={notifications.notification} />
-          <span>{user.name} logged in </span>
-          <button onClick={handleLogout}>logout</button>
-          <div>
-            {blogVisible === true ? (
-              <NewBlogForm
-                title={title}
-                setTitle={setTitle}
-                author={author}
-                setAuthor={setAuthor}
-                url={url}
-                setUrl={setUrl}
-                handleCreate={handleCreate}
-                handleNewBlog={handleNewBlog}
-              />
-            ) : (
-              <button onClick={handleNewBlog}>create new blog</button>
-            )}
-          </div>
-          {blogs
-            .sort((a, b) => b.likes - a.likes)
-            .map((blog) => (
-              <Blog
-                data-test="vlogs"
-                key={blog.id}
-                blog={blog}
-                user={user}
-                dispatch={dispatch}
-                blogs={blogs}
-              />
-            ))}
-        </div>
+
+          <Routes>
+            <Route
+              path="/users"
+              element={
+                <View
+                  users={users}
+                  notifications={notifications}
+                  user={user}
+                  handleLogout={handleLogout}
+                />
+              }
+            />
+            <Route
+              path="/"
+              element={
+                <Home
+                  user={user}
+                  blogs={blogs}
+                  blogVisible={blogVisible}
+                  title={title}
+                  setTitle={setTitle}
+                  author={author}
+                  setAuthor={setAuthor}
+                  url={url}
+                  setUrl={setUrl}
+                  handleCreate={handleCreate}
+                  handleNewBlog={handleNewBlog}
+                  handleLogout={handleLogout}
+                  dispatch={dispatch}
+                />
+              }
+            />
+          </Routes>
+        </BrowserRouter>
       </>
     );
   };
