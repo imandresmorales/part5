@@ -8,7 +8,7 @@ import {
   showNotification,
   hideNotification,
 } from "./reducers/notificationReducer";
-import { addBlog } from "./reducers/blogReducer";
+import { addBlog, updateBlog } from "./reducers/blogReducer";
 import { loginUser, logoutUser } from "./reducers/userReducer";
 
 import userService from "./services/users";
@@ -59,10 +59,15 @@ const ErrorMessage = ({ message }) => {
 };
 
 const Head = ({ user, handleLogout }) => {
+  const margin = {
+    margin: "0 0 3px 0",
+  };
   return (
     <div>
       <p>{user.name} logged in </p>
-      <button onClick={handleLogout}>logout</button>
+      <button style={margin} onClick={handleLogout}>
+        logout
+      </button>
     </div>
   );
 };
@@ -82,6 +87,9 @@ const Home = ({
   handleLogout,
   dispatch,
 }) => {
+  const margin = {
+    margin: "0 0 4px 0",
+  };
   return (
     <>
       <Head user={user} handleLogout={handleLogout} />
@@ -97,7 +105,9 @@ const Home = ({
           handleNewBlog={handleNewBlog}
         />
       ) : (
-        <button onClick={handleNewBlog}>create new blog</button>
+        <button style={margin} onClick={handleNewBlog}>
+          create new blog
+        </button>
       )}
       {blogs
         .sort((a, b) => b.likes - a.likes)
@@ -162,6 +172,52 @@ const User = ({ users, handleLogout, user }) => {
   );
 };
 
+const handleLike = ({ user, blogParams, dispatch, blogs }) => {
+  blogService.setToken(user.token);
+
+  const object = {
+    user: blogParams.user.id,
+    title: blogParams.title,
+    likes: blogParams.likes + 1,
+    author: blogParams.author,
+    url: blogParams.url,
+    id: blogParams.id,
+  };
+
+  blogService.put(object).then(() => {
+    const b = blogParams;
+    const bChange = { ...b, likes: blogParams.likes + 1 };
+    const updateBlogs = blogs.map((vlog) =>
+      vlog.id === blogParams.id ? bChange : vlog,
+    );
+    dispatch(updateBlog(updateBlogs));
+  });
+};
+
+const Blogs = ({ blogs, handleLogout, user, dispatch }) => {
+  const id = useParams().id;
+  const blogParams = blogs.find((blog) => blog.id === id);
+
+  return (
+    <>
+      <Head user={user} handleLogout={handleLogout} />
+      <h1>
+        {blogParams.title} {blogParams.author}
+      </h1>
+      <a href="#">{blogParams.url}</a>
+      <p>
+        <span>likes {blogParams.likes}</span>{" "}
+        <button
+          onClick={() => handleLike({ user, blogParams, dispatch, blogs })}
+        >
+          like
+        </button>
+      </p>
+      <p>added by {blogParams.user.name}</p>
+    </>
+  );
+};
+
 const App = () => {
   const dispatch = useDispatch();
   const notifications = useSelector((state) => state.notification);
@@ -177,7 +233,6 @@ const App = () => {
   const [blogVisible, setBlogVisible] = useState(false);
 
   const [users, setUsers] = useState([]);
-  // console.log(blogVisible);
 
   useEffect(() => {
     userService.getAll().then((user) => setUsers(user));
@@ -305,6 +360,17 @@ const App = () => {
           <Notification message={notifications.notification} />
 
           <Routes>
+            <Route
+              path="/blogs/:id"
+              element={
+                <Blogs
+                  user={user}
+                  blogs={blogs}
+                  handleLogout={handleLogout}
+                  dispatch={dispatch}
+                />
+              }
+            />
             <Route
               path="/users/:id"
               element={
