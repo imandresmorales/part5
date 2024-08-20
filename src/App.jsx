@@ -13,7 +13,13 @@ import { loginUser, logoutUser } from "./reducers/userReducer";
 
 import userService from "./services/users";
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link,
+  useParams,
+} from "react-router-dom";
 
 const Notification = ({ message }) => {
   if (message === null) return null;
@@ -126,13 +132,33 @@ const View = ({ users, notifications, user, handleLogout }) => {
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
-              <td>{user.name}</td>
+              <td>
+                <Link to={`/users/${user.id}`}>{user.name}</Link>
+              </td>
               <td>{user.blogs.length}</td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
+  );
+};
+
+const User = ({ users, handleLogout, user }) => {
+  const id = useParams().id;
+  const userParams = users.find((user) => user.id === id);
+  if (!userParams) return null;
+  return (
+    <>
+      <Head user={user} handleLogout={handleLogout} />
+      <h2>{userParams.name}</h2>
+      <h3>added blogs</h3>
+      <ul>
+        {userParams.blogs.map((blog) => (
+          <li key={blog.id}>{blog.title}</li>
+        ))}
+      </ul>
+    </>
   );
 };
 
@@ -279,6 +305,12 @@ const App = () => {
           <Notification message={notifications.notification} />
 
           <Routes>
+            <Route
+              path="/users/:id"
+              element={
+                <User users={users} handleLogout={handleLogout} user={user} />
+              }
+            />
             <Route
               path="/users"
               element={
