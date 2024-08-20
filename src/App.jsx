@@ -58,20 +58,6 @@ const ErrorMessage = ({ message }) => {
   );
 };
 
-const Head = ({ user, handleLogout }) => {
-  const margin = {
-    margin: "0 0 3px 0",
-  };
-  return (
-    <div>
-      <p>{user.name} logged in </p>
-      <button style={margin} onClick={handleLogout}>
-        logout
-      </button>
-    </div>
-  );
-};
-
 const Home = ({
   user,
   blogs,
@@ -92,7 +78,6 @@ const Home = ({
   };
   return (
     <>
-      <Head user={user} handleLogout={handleLogout} />
       {blogVisible === true ? (
         <NewBlogForm
           title={title}
@@ -125,11 +110,11 @@ const Home = ({
   );
 };
 
-const View = ({ users, notifications, user, handleLogout }) => {
+const View = ({ users, notifications }) => {
   return (
     <div>
       <Notification message={notifications.notification} />
-      <Head user={user} handleLogout={handleLogout} />
+
       <h2>Users</h2>
       <table>
         <thead>
@@ -154,13 +139,12 @@ const View = ({ users, notifications, user, handleLogout }) => {
   );
 };
 
-const User = ({ users, handleLogout, user }) => {
+const User = ({ users }) => {
   const id = useParams().id;
   const userParams = users.find((user) => user.id === id);
   if (!userParams) return null;
   return (
     <>
-      <Head user={user} handleLogout={handleLogout} />
       <h2>{userParams.name}</h2>
       <h3>added blogs</h3>
       <ul>
@@ -194,13 +178,12 @@ const handleLike = ({ user, blogParams, dispatch, blogs }) => {
   });
 };
 
-const Blogs = ({ blogs, handleLogout, user, dispatch }) => {
+const Blogs = ({ blogs, user, dispatch }) => {
   const id = useParams().id;
   const blogParams = blogs.find((blog) => blog.id === id);
 
   return (
     <>
-      <Head user={user} handleLogout={handleLogout} />
       <h1>
         {blogParams.title} {blogParams.author}
       </h1>
@@ -214,6 +197,15 @@ const Blogs = ({ blogs, handleLogout, user, dispatch }) => {
         </button>
       </p>
       <p>added by {blogParams.user.name}</p>
+    </>
+  );
+};
+
+const Login = ({ user, handleLogout }) => {
+  return (
+    <>
+      <span>{user.name} logged in </span>
+      <button onClick={handleLogout}>logout</button>
     </>
   );
 };
@@ -233,6 +225,10 @@ const App = () => {
   const [blogVisible, setBlogVisible] = useState(false);
 
   const [users, setUsers] = useState([]);
+
+  const margin = {
+    margin: "5px",
+  };
 
   useEffect(() => {
     userService.getAll().then((user) => setUsers(user));
@@ -356,7 +352,16 @@ const App = () => {
     return (
       <>
         <BrowserRouter>
-          <h2>blogs</h2>
+          <div>
+            <Link style={margin} to="/">
+              blog
+            </Link>
+            <Link style={margin} to="/users">
+              users
+            </Link>
+            <Login user={user} handleLogout={handleLogout} />
+          </div>
+          <h2>blog app</h2>
           <Notification message={notifications.notification} />
 
           <Routes>
