@@ -181,6 +181,7 @@ const handleLike = ({ user, blogParams, dispatch, blogs }) => {
 const Blogs = ({ blogs, user, dispatch }) => {
   const id = useParams().id;
   const blogParams = blogs.find((blog) => blog.id === id);
+  const random = () => Math.random(99999);
 
   return (
     <>
@@ -197,6 +198,16 @@ const Blogs = ({ blogs, user, dispatch }) => {
         </button>
       </p>
       <p>added by {blogParams.user.name}</p>
+      <h2>Comments</h2>
+      <ul>
+        {blogParams.comments.length === 0 ? (
+          <p>No comments</p>
+        ) : (
+          blogParams.comments.map((comment) => (
+            <li key={random()}>{comment}</li>
+          ))
+        )}
+      </ul>
     </>
   );
 };
