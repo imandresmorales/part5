@@ -33,6 +33,7 @@ const put = async (object) => {
     likes: object.likes,
     author: object.author,
     url: object.url,
+    comments: object.comments,
   };
   const response = await axios.put(`${baseUrl}/${object.id}`, blog, config);
 

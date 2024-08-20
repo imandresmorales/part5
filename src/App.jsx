@@ -178,7 +178,40 @@ const handleLike = ({ user, blogParams, dispatch, blogs }) => {
   });
 };
 
-const Blogs = ({ blogs, user, dispatch }) => {
+const handleComment = ({
+  dispatch,
+  comment,
+  blogParams,
+  blogs,
+  user,
+  setComment,
+}) => {
+  blogService.setToken(user.token);
+
+  let newComments = [...blogParams.comments, comment];
+  const object = {
+    user: blogParams.user.id,
+    title: blogParams.title,
+    likes: blogParams.likes,
+    author: blogParams.author,
+    url: blogParams.url,
+    id: blogParams.id,
+    comments: newComments,
+  };
+
+  blogService.put(object).then(() => {
+    const b = blogParams;
+    const bChange = { ...b, comments: newComments };
+    const updateBlogs = blogs.map((vlog) =>
+      vlog.id === blogParams.id ? bChange : vlog,
+    );
+
+    dispatch(updateBlog(updateBlogs));
+    setComment("");
+  });
+};
+
+const Blogs = ({ blogs, user, dispatch, comment, setComment }) => {
   const id = useParams().id;
   const blogParams = blogs.find((blog) => blog.id === id);
   const random = () => Math.random(99999);
@@ -199,6 +232,27 @@ const Blogs = ({ blogs, user, dispatch }) => {
       </p>
       <p>added by {blogParams.user.name}</p>
       <h2>Comments</h2>
+
+      <input
+        type="text"
+        value={comment}
+        onChange={(event) => setComment(event.target.value)}
+      />
+      <button
+        onClick={() =>
+          handleComment({
+            dispatch,
+            comment,
+            blogParams,
+            blogs,
+            user,
+            setComment,
+          })
+        }
+      >
+        add comment
+      </button>
+
       <ul>
         {blogParams.comments.length === 0 ? (
           <p>No comments</p>
@@ -236,6 +290,9 @@ const App = () => {
   const [blogVisible, setBlogVisible] = useState(false);
 
   const [users, setUsers] = useState([]);
+
+  const [comment, setComment] = useState("");
+  // console.log(comment);
 
   const margin = {
     margin: "5px",
@@ -384,6 +441,8 @@ const App = () => {
                   blogs={blogs}
                   handleLogout={handleLogout}
                   dispatch={dispatch}
+                  comment={comment}
+                  setComment={setComment}
                 />
               }
             />
