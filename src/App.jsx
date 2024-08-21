@@ -21,6 +21,48 @@ import {
   useParams,
 } from "react-router-dom";
 
+import styled, { createGlobalStyle } from "styled-components";
+
+const Body = styled.div`
+  background: #e8f5e9;
+  min-height: 100vh;
+  margin: 0px;
+  padding: 10px;
+  font-family: Verdana, Arial, Tahoma;
+`;
+
+const CreateNewBlogButton = styled.button`
+  background: #b3e5fc;
+  font-size: 1.25em;
+  margin: 2px;
+  border: 1px solid;
+  border-radius: 4px;
+`;
+
+const LogoutButton = styled.button`
+  background: #ffeaea;
+  font-size: 1em;
+  padding: 2px 8px 2px 8px;
+  margin: 1px;
+  border: 1px solid;
+  border-radius: 0px;
+`;
+
+const LoginButton = styled.button`
+  background: #b3e5fc;
+  font-size: 1em;
+  padding: 2px 8px 2px 8px;
+  margin: 1px;
+  border: 1px solid;
+  border-radius: 0px;
+`;
+
+const Input = styled.input`
+  background: #e8f5e9;
+  border-radius: 9px;
+  margin: 0px 5px 2px 5px;
+`;
+
 const Notification = ({ message }) => {
   if (message === null) return null;
   const css = {
@@ -90,10 +132,11 @@ const Home = ({
           handleNewBlog={handleNewBlog}
         />
       ) : (
-        <button style={margin} onClick={handleNewBlog}>
+        <CreateNewBlogButton style={margin} onClick={handleNewBlog}>
           create new blog
-        </button>
+        </CreateNewBlogButton>
       )}
+
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => (
@@ -224,21 +267,21 @@ const Blogs = ({ blogs, user, dispatch, comment, setComment }) => {
       <a href="#">{blogParams.url}</a>
       <p>
         <span>likes {blogParams.likes}</span>{" "}
-        <button
+        <CreateNewBlogButton
           onClick={() => handleLike({ user, blogParams, dispatch, blogs })}
         >
           like
-        </button>
+        </CreateNewBlogButton>
       </p>
       <p>added by {blogParams.user.name}</p>
       <h2>Comments</h2>
 
-      <input
+      <Input
         type="text"
         value={comment}
         onChange={(event) => setComment(event.target.value)}
       />
-      <button
+      <CreateNewBlogButton
         onClick={() =>
           handleComment({
             dispatch,
@@ -251,7 +294,7 @@ const Blogs = ({ blogs, user, dispatch, comment, setComment }) => {
         }
       >
         add comment
-      </button>
+      </CreateNewBlogButton>
 
       <ul>
         {blogParams.comments.length === 0 ? (
@@ -270,7 +313,7 @@ const Login = ({ user, handleLogout }) => {
   return (
     <>
       <span>{user.name} logged in </span>
-      <button onClick={handleLogout}>logout</button>
+      <LogoutButton onClick={handleLogout}>logout</LogoutButton>
     </>
   );
 };
@@ -292,7 +335,6 @@ const App = () => {
   const [users, setUsers] = useState([]);
 
   const [comment, setComment] = useState("");
-  // console.log(comment);
 
   const margin = {
     margin: "5px",
@@ -350,7 +392,7 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             username
-            <input
+            <Input
               data-testid="username"
               type="text"
               value={username}
@@ -360,7 +402,7 @@ const App = () => {
           </div>
           <div>
             password
-            <input
+            <Input
               data-testid="password"
               type="password"
               value={password}
@@ -368,7 +410,7 @@ const App = () => {
               onChange={({ target }) => setPassword(target.value)}
             />
           </div>
-          <button type="submit">login</button>
+          <LoginButton type="submit">login</LoginButton>
         </form>
       </>
     );
@@ -489,7 +531,7 @@ const App = () => {
     );
   };
 
-  return <div>{user.name === null ? loginForm() : blogForm()}</div>;
+  return <Body>{user.name === null ? loginForm() : blogForm()}</Body>;
 };
 
 export default App;

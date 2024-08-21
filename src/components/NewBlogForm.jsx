@@ -1,3 +1,27 @@
+import styled from "styled-components";
+
+const CreateButton = styled.button`
+  background: #b3e5fc;
+  font-size: 1.25em;
+  margin: 5px;
+  border: 1px solid;
+  border-radius: 4px;
+`;
+
+const CancelButton = styled.button`
+  background: #ffe5b4;
+  font-size: 1.25em;
+  margin: 5px;
+  border: 1px solid;
+  border-radius: 4px;
+`;
+
+const Input = styled.input`
+  background: #e8f5e9;
+  border-radius: 9px;
+  margin: 0px 5px 2px 5px;
+`;
+
 const newBlogForm = ({
   title,
   setTitle,
@@ -13,7 +37,7 @@ const newBlogForm = ({
       <h2>Create new</h2>
       <div>
         title:
-        <input
+        <Input
           type="text"
           value={title}
           name="title"
@@ -22,7 +46,7 @@ const newBlogForm = ({
       </div>
       <div>
         author:
-        <input
+        <Input
           type="text"
           value={author}
           name="author"
@@ -31,15 +55,15 @@ const newBlogForm = ({
       </div>
       <div>
         url:
-        <input
+        <Input
           type="text"
           value={url}
           name="url"
           onChange={({ target }) => setUrl(target.value)}
         />
       </div>
-      <button onClick={handleCreate}>create</button>
-      <button onClick={handleNewBlog}>cancel</button>
+      <CreateButton onClick={handleCreate}>create</CreateButton>
+      <CancelButton onClick={handleNewBlog}>cancel</CancelButton>
     </>
   );
 };

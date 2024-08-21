@@ -2,6 +2,15 @@ import blogService from "../services/blogs";
 import PropTypes from "prop-types";
 import { eliminarBlog } from "../reducers/blogReducer";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
+
+const ListBlogs = styled.div`
+  background: #e8f5e9;
+  color: #e8f5e9;
+  padding: 10px;
+  font-family: Verdana, Arial, Tahoma;
+  border-radius: 2px;
+`;
 
 const Blog = ({ blog, user, dispatch, blogs }) => {
   const blogStyle = {
@@ -40,11 +49,7 @@ const Blog = ({ blog, user, dispatch, blogs }) => {
     }
   };
 
-  return (
-    <div style={blogStyle}>
-      <div>{view()}</div>
-    </div>
-  );
+  return <ListBlogs style={blogStyle}>{view()}</ListBlogs>;
 };
 
 Blog.propTypes = {
